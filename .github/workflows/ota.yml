@@ -1,0 +1,42 @@
+name: OTA Update
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  ota:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build web
+        run: npm run build
+
+      - name: Zip dist
+        run: |
+          cd dist
+          zip -r ../update.zip .
+
+      - name: Create GitHub Release (latest)
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: latest
+          name: OTA Update
+          files: update.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
