@@ -219,7 +219,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen">
-      <main className="max-w-md mx-auto px-5 pt-6 pb-40">
+      <main className="max-w-md mx-auto px-5 pt-app-container pb-40">
         <AnimatePresence mode="wait">
           {activeTab === 'home' && (
             <motion.div key="home" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-6">
