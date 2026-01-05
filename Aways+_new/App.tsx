@@ -51,7 +51,7 @@ const App: React.FC = () => {
   const [studyMode, setStudyMode] = useState<'focus' | 'break'>('focus');
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  const [updateStatus, setUpdateStatus] = useState<'idle' | 'available' | 'downloading' | 'ready'>('idle');
+  const [updateStatus, setUpdateStatus] = useState<'idle' | 'available' | 'downloading' | 'installing' | 'ready'>('idle');
   const [newVersion, setNewVersion] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
 
@@ -129,9 +129,24 @@ const App: React.FC = () => {
     try {
       setUpdateStatus('downloading');
       setDownloadProgress(0);
-      await OtaService.download(newVersion);
-      setUpdateStatus('ready');
+      
+      const result = await OtaService.download(newVersion);
+      
+      if (result.version) {
+        setUpdateStatus('installing');
+        // Pequeño delay para asegurar que el usuario lee "Instalando..."
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // La app se recargará aquí. Si falla por timeout suele ser falso positivo.
+        await OtaService.install(result.version);
+        setUpdateStatus('ready');
+      }
     } catch (error) {
+      // Ignoramos errores si estamos en fase de instalación (posible reload race condition)
+      if (updateStatus === 'installing') {
+         console.log("Reload triggered (ignoring catch block)");
+         return;
+      }
       console.error("Update failed", error);
       setUpdateStatus('available');
       alert("Error al actualizar. Inténtalo de nuevo.");
@@ -345,12 +360,14 @@ const App: React.FC = () => {
               <p className="font-black uppercase text-xs text-primary mb-1">
                 {updateStatus === 'available' && 'Nueva Versión Disponible'}
                 {updateStatus === 'downloading' && 'Descargando...'}
-                {updateStatus === 'ready' && 'Instalando...'}
+                {updateStatus === 'installing' && 'Descomprimiendo...'}
+                {updateStatus === 'ready' && 'Reiniciando...'}
               </p>
               <p className="text-sm font-bold">
                  {updateStatus === 'available' && `v${newVersion} lista para instalar`}
                  {updateStatus === 'downloading' && 'Por favor espera'}
-                 {updateStatus === 'ready' && 'Reiniciando aplicación...'}
+                 {updateStatus === 'installing' && 'Instalando actualización'}
+                 {updateStatus === 'ready' && 'Aplicando cambios...'}
               </p>
             </div>
             
@@ -363,15 +380,17 @@ const App: React.FC = () => {
               </button>
             )}
             
-            {updateStatus === 'downloading' && (
+            {(updateStatus === 'downloading' || updateStatus === 'installing') && (
                <div className="w-full max-w-[120px]">
                  <div className="w-full bg-surface/20 h-2 rounded-full overflow-hidden border border-surface/30">
                    <div 
                       className="h-full bg-primary transition-all duration-300 ease-out"
-                      style={{ width: `${downloadProgress}%` }}
+                      style={{ width: updateStatus === 'installing' ? '100%' : `${downloadProgress}%` }}
                    />
                  </div>
-                 <p className="text-[10px] font-black text-right mt-1 opacity-70">{downloadProgress}%</p>
+                 <p className="text-[10px] font-black text-right mt-1 opacity-70">
+                    {updateStatus === 'installing' ? '100%' : `${downloadProgress}%`}
+                 </p>
                </div>
             )}
           </motion.div>
