@@ -94,7 +94,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             Cerrar Sesión
         </button>
         <button className="w-full bg-red-500/10 text-red-500 border-[2px] border-main p-4 neo-shadow-sm flex items-center justify-center gap-2 font-black italic uppercase text-xs">
-            Borrar Todo el Legado
+            Borrar Todos Los Datos
         </button>
         
         <div className="pt-4">
