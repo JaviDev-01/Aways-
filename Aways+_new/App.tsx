@@ -15,7 +15,8 @@ import { ExamFormModal } from './components/ExamFormModal';
 import { AchievementUnlockedModal } from './components/AchievementUnlockedModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, Zap, Maximize2 } from 'lucide-react';
-import { checkForUpdates } from './ota';
+import { OtaService } from './ota';
+import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
 const DAILY_GOAL_MINUTES = 120;
 
@@ -49,6 +50,8 @@ const App: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [studyMode, setStudyMode] = useState<'focus' | 'break'>('focus');
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+
+  const [updateAvailable, setUpdateAvailable] = useState(false);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -85,7 +88,15 @@ const App: React.FC = () => {
 
   useEffect(() => {
     NotificationService.requestPermissions();
-    checkForUpdates();
+    
+    // OTA Logic
+    CapacitorUpdater.notifyAppReady(); // Critical: Tells plugin the app loaded successfully
+    
+    OtaService.checkForUpdates().then(isAvailable => {
+      if (isAvailable) {
+        setUpdateAvailable(true);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -281,6 +292,27 @@ const App: React.FC = () => {
 
       <AnimatePresence>
         {newlyUnlockedAchievement && <AchievementUnlockedModal achievement={newlyUnlockedAchievement} onClose={() => setNewlyUnlockedAchievement(null)} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {updateAvailable && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-20 left-5 right-5 z-50 bg-black text-white p-4 border-2 border-primary shadow-[4px_4px_0px_0px_var(--primary)] flex items-center justify-between"
+          >
+            <div>
+              <p className="font-black uppercase text-xs text-primary mb-1">Nueva Versión</p>
+              <p className="text-sm font-bold">Actualización disponible</p>
+            </div>
+            <button 
+              onClick={() => OtaService.applyUpdate()}
+              className="bg-primary text-white px-4 py-2 font-black uppercase text-xs hover:scale-105 active:scale-95 transition-transform"
+            >
+              INSTALAR
+            </button>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
