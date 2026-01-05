@@ -22,8 +22,8 @@ export const OtaService = {
       // 1. Obtener versión local del bundle JS (no la nativa)
       const localVersion = pkg.version;
       
-      // 2. Obtener versión remota desde GitHub
-      const response = await fetch('https://raw.githubusercontent.com/JaviDev-01/Aways-/main/package.json');
+      // 2. Obtener versión remota desde GitHub (Corregido para subcarpeta)
+      const response = await fetch('https://raw.githubusercontent.com/JaviDev-01/Aways-/main/Aways%2B_new/package.json');
       if (!response.ok) {
         console.warn('Failed to fetch remote version info');
         return false;

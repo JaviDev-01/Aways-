@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    defaults:
+      run:
+        working-directory: ./Aways+_new
+
     steps:
       - uses: actions/checkout@v3
 
@@ -23,8 +27,8 @@ jobs:
       - name: Create Update Zip
         run: |
           cd dist
-          zip -r ../update.zip .
-          cd ..
+          zip -r ../../update.zip .
+          cd ../..
 
       - name: Release to GitHub
         uses: softprops/action-gh-release@v1
@@ -32,4 +36,3 @@ jobs:
           tag_name: latest
           files: update.zip
           prerelease: false
-          overwrite: true
