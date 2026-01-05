@@ -53,6 +53,7 @@ const App: React.FC = () => {
 
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'available' | 'downloading' | 'ready'>('idle');
   const [newVersion, setNewVersion] = useState<string | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState(0);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -101,15 +102,38 @@ const App: React.FC = () => {
     });
   }, []);
 
+  // Listener para el progreso de descarga
+  useEffect(() => {
+    let listenerHandle: any;
+
+    const setupListener = async () => {
+      listenerHandle = await CapacitorUpdater.addListener('download', (info: any) => {
+        // info.percent suele ser un valor entre 0 y 100
+        if (info.percent) {
+          setDownloadProgress(Math.round(info.percent));
+        }
+      });
+    };
+    
+    setupListener();
+
+    return () => {
+      if (listenerHandle) {
+        listenerHandle.remove();
+      }
+    };
+  }, []);
+
   const handleUpdate = async () => {
+    if (!newVersion) return;
     try {
       setUpdateStatus('downloading');
-      await OtaService.downloadAndInstall();
+      setDownloadProgress(0);
+      await OtaService.download(newVersion);
       setUpdateStatus('ready');
-      // En teoría la app se recarga sola, pero por si acaso mostramos estado final
     } catch (error) {
       console.error("Update failed", error);
-      setUpdateStatus('available'); // Volver a permitir intentar
+      setUpdateStatus('available');
       alert("Error al actualizar. Inténtalo de nuevo.");
     }
   };
@@ -340,7 +364,15 @@ const App: React.FC = () => {
             )}
             
             {updateStatus === 'downloading' && (
-               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-primary"></div>
+               <div className="w-full max-w-[120px]">
+                 <div className="w-full bg-surface/20 h-2 rounded-full overflow-hidden border border-surface/30">
+                   <div 
+                      className="h-full bg-primary transition-all duration-300 ease-out"
+                      style={{ width: `${downloadProgress}%` }}
+                   />
+                 </div>
+                 <p className="text-[10px] font-black text-right mt-1 opacity-70">{downloadProgress}%</p>
+               </div>
             )}
           </motion.div>
         )}

@@ -41,20 +41,21 @@ export const OtaService = {
   },
 
   // Descarga e instala
-  async downloadAndInstall() {
+  async download(version: string) {
     try {
-      console.log('[OTA] Starting download...');
-      // 1. Descargar
+      console.log(`[OTA] Starting download for v${version}...`);
+      
+      // 1. Descargar usando la versión específica
       const result = await CapacitorUpdater.download({
         url: 'https://github.com/JaviDev-01/Aways-/releases/latest/download/update.zip',
-        version: 'latest', 
+        version: version, // Usamos el ID de versión real (ej: "2.5.0")
       });
       
       console.log('[OTA] Download complete. Installing...');
       
       // 2. Instalar (Reload)
       if (result.version) {
-        await CapacitorUpdater.set({ id: 'latest' });
+        await CapacitorUpdater.set({ id: result.version });
       }
     } catch (err) {
       console.error('[OTA] Error applying update', err);
