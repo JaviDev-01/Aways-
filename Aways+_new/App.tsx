@@ -51,7 +51,8 @@ const App: React.FC = () => {
   const [studyMode, setStudyMode] = useState<'focus' | 'break'>('focus');
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
-  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState<'idle' | 'available' | 'downloading' | 'ready'>('idle');
+  const [newVersion, setNewVersion] = useState<string | null>(null);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -90,14 +91,28 @@ const App: React.FC = () => {
     NotificationService.requestPermissions();
     
     // OTA Logic
-    CapacitorUpdater.notifyAppReady(); // Critical: Tells plugin the app loaded successfully
+    CapacitorUpdater.notifyAppReady(); 
     
-    OtaService.checkForUpdates().then(isAvailable => {
-      if (isAvailable) {
-        setUpdateAvailable(true);
+    OtaService.checkRemoteVersion().then(version => {
+      if (version) {
+        setNewVersion(version);
+        setUpdateStatus('available');
       }
     });
   }, []);
+
+  const handleUpdate = async () => {
+    try {
+      setUpdateStatus('downloading');
+      await OtaService.downloadAndInstall();
+      setUpdateStatus('ready');
+      // En teoría la app se recarga sola, pero por si acaso mostramos estado final
+    } catch (error) {
+      console.error("Update failed", error);
+      setUpdateStatus('available'); // Volver a permitir intentar
+      alert("Error al actualizar. Inténtalo de nuevo.");
+    }
+  };
 
   useEffect(() => {
     let interval: any = null;
@@ -294,7 +309,8 @@ const App: React.FC = () => {
         {newlyUnlockedAchievement && <AchievementUnlockedModal achievement={newlyUnlockedAchievement} onClose={() => setNewlyUnlockedAchievement(null)} />}
       </AnimatePresence>
       <AnimatePresence>
-        {updateAvailable && (
+      <AnimatePresence>
+        {updateStatus !== 'idle' && (
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -302,17 +318,33 @@ const App: React.FC = () => {
             className="fixed bottom-20 left-5 right-5 z-50 bg-black text-white p-4 border-2 border-primary shadow-[4px_4px_0px_0px_var(--primary)] flex items-center justify-between"
           >
             <div>
-              <p className="font-black uppercase text-xs text-primary mb-1">Nueva Versión</p>
-              <p className="text-sm font-bold">Actualización disponible</p>
+              <p className="font-black uppercase text-xs text-primary mb-1">
+                {updateStatus === 'available' && 'Nueva Versión Disponible'}
+                {updateStatus === 'downloading' && 'Descargando...'}
+                {updateStatus === 'ready' && 'Instalando...'}
+              </p>
+              <p className="text-sm font-bold">
+                 {updateStatus === 'available' && `v${newVersion} lista para instalar`}
+                 {updateStatus === 'downloading' && 'Por favor espera'}
+                 {updateStatus === 'ready' && 'Reiniciando aplicación...'}
+              </p>
             </div>
-            <button 
-              onClick={() => OtaService.applyUpdate()}
-              className="bg-primary text-white px-4 py-2 font-black uppercase text-xs hover:scale-105 active:scale-95 transition-transform"
-            >
-              INSTALAR
-            </button>
+            
+            {updateStatus === 'available' && (
+              <button 
+                onClick={handleUpdate}
+                className="bg-primary text-white px-4 py-2 font-black uppercase text-xs hover:scale-105 active:scale-95 transition-transform"
+              >
+                INSTALAR
+              </button>
+            )}
+            
+            {updateStatus === 'downloading' && (
+               <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-primary"></div>
+            )}
           </motion.div>
         )}
+      </AnimatePresence>
       </AnimatePresence>
     </div>
   );
