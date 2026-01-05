@@ -1,7 +1,7 @@
 {
   "name": "aways-plus-v1-1",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/android": "8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/core": "^8.0.0",
     "@capacitor/local-notifications": "^7.0.0",
@@ -20,6 +21,7 @@
     "react-dom": "^19.2.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.0.0",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
