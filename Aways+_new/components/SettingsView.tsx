@@ -2,6 +2,7 @@
 import React from 'react';
 import { UserLevel, SUBJECT_COLORS } from '../types';
 import { LogOut, Trash2, Moon, Sun, Palette, ChevronRight, ShieldCheck, Database } from 'lucide-react';
+import pkg from '../package.json';
 
 interface SettingsViewProps {
   currentUser: string;
@@ -88,13 +89,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </div>
       </div>
 
-      <div className="pt-4 space-y-3">
+      <div className="pt-4 space-y-3 text-center">
         <button onClick={onLogout} className="w-full bg-surface border-[2px] border-main p-4 neo-shadow-sm flex items-center justify-center gap-2 font-black italic uppercase text-xs">
             Cerrar Sesión
         </button>
         <button className="w-full bg-red-500/10 text-red-500 border-[2px] border-main p-4 neo-shadow-sm flex items-center justify-center gap-2 font-black italic uppercase text-xs">
             Borrar Todo el Legado
         </button>
+        
+        <div className="pt-4">
+          <p className="text-[10px] font-black text-main opacity-20 uppercase tracking-[0.2em]">
+            Aways+ System v{pkg.version}
+          </p>
+        </div>
       </div>
     </div>
   );
