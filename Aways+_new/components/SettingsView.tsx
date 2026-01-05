@@ -82,7 +82,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <button className="w-full bg-surface border-[2px] border-main p-4 flex items-center justify-between group">
                 <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-primary/10 text-primary flex items-center justify-center"><ShieldCheck size={16} /></div>
-                    <span className="text-xs font-black uppercase">Privacidad de Datos</span>
+                    <span className="text-xs font-black uppercase">Politica de privacidad</span>
                 </div>
                 <ChevronRight size={16} className="opacity-20" />
             </button>
