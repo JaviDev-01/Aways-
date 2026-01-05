@@ -75,7 +75,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <button className="w-full bg-surface border-[2px] border-main p-4 flex items-center justify-between group">
                 <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-primary/10 text-primary flex items-center justify-center"><Database size={16} /></div>
-                    <span className="text-xs font-black uppercase">Exportar Datos (.JSON)</span>
+                    <span className="text-xs font-black uppercase">Exportar Datos</span>
                 </div>
                 <ChevronRight size={16} className="opacity-20" />
             </button>
