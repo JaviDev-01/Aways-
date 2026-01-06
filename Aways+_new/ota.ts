@@ -21,7 +21,7 @@ export const OtaService = {
   async checkRemoteVersion(): Promise<string | null> {
     try {
       const localVersion = pkg.version;
-      const response = await fetch('https://raw.githubusercontent.com/JaviDev-01/Aways-/main/Aways%2B_new/package.json');
+      const response = await fetch(`https://raw.githubusercontent.com/JaviDev-01/Aways-/main/Aways%2B_new/package.json?t=${Date.now()}`);
       
       if (!response.ok) return null;
       
