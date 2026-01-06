@@ -130,26 +130,32 @@ const App: React.FC = () => {
       setUpdateStatus('downloading');
       setDownloadProgress(0);
       
+      // 1. Descarga
       const result = await OtaService.download(newVersion);
       
       if (result.version) {
+        // 2. Éxito en descarga -> Preparamos UI
         setUpdateStatus('installing');
-        // Pequeño delay para asegurar que el usuario lee "Instalando..."
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 1500)); // Tiempo para leer "Descomprimiendo"
+
+        setUpdateStatus('ready'); // "Reiniciando..."
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Tiempo para leer "Reiniciando"
         
-        // La app se recargará aquí. Si falla por timeout suele ser falso positivo.
-        await OtaService.install(result.version);
-        setUpdateStatus('ready');
+        // 3. Instalación (Reload)
+        // Envolvemos en un try/catch interno que NO hace nada si falla.
+        // Porque el fallo suele ser que la app se cierra para reiniciarse.
+        try {
+            await OtaService.install(result.version);
+        } catch (e) {
+            console.log("App reloading for update...", e);
+            // No hacemos nada, dejamos que la app muera/reinicie en paz.
+        }
       }
     } catch (error) {
-      // Ignoramos errores si estamos en fase de instalación (posible reload race condition)
-      if (updateStatus === 'installing') {
-         console.log("Reload triggered (ignoring catch block)");
-         return;
-      }
-      console.error("Update failed", error);
+      // Este catch solo saltará si falla la DESCARGA (paso 1).
+      console.error("Download failed", error);
       setUpdateStatus('available');
-      alert("Error al actualizar. Inténtalo de nuevo.");
+      alert("Error en la descarga. Inténtalo de nuevo.");
     }
   };
 
