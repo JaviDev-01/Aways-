@@ -3,6 +3,8 @@ import React from 'react';
 import { UserLevel, SUBJECT_COLORS } from '../types';
 import { LogOut, Trash2, Moon, Sun, Palette, ChevronRight, ShieldCheck, Database } from 'lucide-react';
 import pkg from '../package.json';
+import { PrivacyModal } from './PrivacyModal';
+import { AnimatePresence } from 'framer-motion';
 
 interface SettingsViewProps {
   currentUser: string;
@@ -18,6 +20,8 @@ interface SettingsViewProps {
 export const SettingsView: React.FC<SettingsViewProps> = ({ 
   currentUser, currentLevel, isDarkMode, setIsDarkMode, accentColor, setAccentColor, onLogout 
 }) => {
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = React.useState(false);
+
   return (
     <div className="space-y-8 pb-20">
       <div className="bg-surface border-[3px] border-main p-6 neo-shadow flex items-center gap-5">
@@ -79,7 +83,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 </div>
                 <ChevronRight size={16} className="opacity-20" />
             </button>
-            <button className="w-full bg-surface border-[2px] border-main p-4 flex items-center justify-between group">
+            <button 
+                onClick={() => setIsPrivacyModalOpen(true)}
+                className="w-full bg-surface border-[2px] border-main p-4 flex items-center justify-between group"
+            >
                 <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-primary/10 text-primary flex items-center justify-center"><ShieldCheck size={16} /></div>
                     <span className="text-xs font-black uppercase">Politica de privacidad</span>
@@ -103,6 +110,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </p>
         </div>
       </div>
+
+      <AnimatePresence>
+        {isPrivacyModalOpen && (
+          <PrivacyModal 
+            isOpen={isPrivacyModalOpen}
+            onClose={() => setIsPrivacyModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
