@@ -62,6 +62,10 @@ const App: React.FC = () => {
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'available' | 'downloading' | 'installing' | 'ready'>('idle');
   const [newVersion, setNewVersion] = useState<string | null>(null);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  
+  // Use a ref to track if initial load has completed, avoiding effect closure staleness
+  const isLoadedRef = React.useRef(false);
 
   useEffect(() => {
     document.body.classList.toggle('dark-mode', isDarkMode);
@@ -107,11 +111,22 @@ const App: React.FC = () => {
         ];
         setQuarters(defaultQuarters);
       }
+      
+      // Mark as loaded
+      setDataLoaded(true);
+      isLoadedRef.current = true;
+      console.log("Data loaded successfully");
     }
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser) {
+    // STRICT GUARD: Only save if we have definitely loaded the data
+    if (!currentUser || !isLoadedRef.current) return;
+
+    // Additional safety: Don't save if critical structures are empty (unless user deleted them, but unlikely to delete all quarters)
+    if (quarters.length === 0) return;
+
+    try {
       StorageService.saveUserData(currentUser, exams);
       calculateStats(exams);
       NotificationService.scheduleExamNotifications(exams);
@@ -124,8 +139,12 @@ const App: React.FC = () => {
       // but ensuring it's saved if modified is good practice, though usually updated via specific functions.
       // If taskHistory changes, we should save it too.
       localStorage.setItem(`aways_tasks_hist_${currentUser}`, JSON.stringify(taskHistory));
+      
+      console.log("Data saved successfully");
+    } catch (error) {
+      console.error("Error saving data:", error);
     }
-  }, [exams, currentUser, currentTasks, taskSubjects, quarters, taskHistory]);
+  }, [exams, currentUser, currentTasks, taskSubjects, quarters, taskHistory, dataLoaded]);
 
   useEffect(() => {
     NotificationService.requestPermissions();

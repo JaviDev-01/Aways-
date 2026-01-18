@@ -113,7 +113,7 @@ export const ExamFormModal: React.FC<ExamFormModalProps> = ({ isOpen, onClose, o
               type="text" 
               value={formData.name} 
               onChange={e => setFormData({...formData, name: e.target.value.toUpperCase()})}
-              className="w-full bg-main/5 border-[3px] border-main p-4 font-black italic text-xl outline-none focus:bg-primary/5 transition-colors text-main"
+              className="w-full bg-main/10 border-[3px] border-main p-4 font-black italic text-xl outline-none focus:bg-primary/10 transition-colors text-main placeholder:text-main/20"
               placeholder="EJ: CÁLCULO AVANZADO"
             />
           </div>

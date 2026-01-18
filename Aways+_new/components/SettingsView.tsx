@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { UserLevel, SUBJECT_COLORS, TaskSubject } from '../types';
-import { LogOut, Trash2, Moon, Sun, Palette, ChevronRight, ShieldCheck, Database, Plus } from 'lucide-react';
+import { LogOut, Trash2, Moon, Sun, Palette, ChevronRight, ShieldCheck, Database, Plus, Bell, Download, Upload, Info, X } from 'lucide-react';
 import pkg from '../package.json';
 import { PrivacyModal } from './PrivacyModal';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,6 +26,43 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [isAddingSub, setIsAddingSub] = useState(false);
   const [newSubName, setNewSubName] = useState('');
   const [newSubColor, setNewSubColor] = useState('#0066FF');
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true); // Persist this in future if needed
+  const [showBackupModal, setShowBackupModal] = useState(false);
+  const [backupData, setBackupData] = useState('');
+
+  const handleExport = () => {
+    const data = {
+      user: currentUser,
+      exams: localStorage.getItem(`userExams_${currentUser}`),
+      tasks: localStorage.getItem(`aways_tasks_curr_${currentUser}`),
+      history: localStorage.getItem(`aways_tasks_hist_${currentUser}`),
+      subjects: localStorage.getItem(`aways_subjects_${currentUser}`),
+      evals: localStorage.getItem(`aways_evals_${currentUser}`),
+      timestamp: new Date().toISOString()
+    };
+    setBackupData(JSON.stringify(data, null, 2));
+    setShowBackupModal(true);
+  };
+
+  const handleImport = () => {
+    try {
+      const data = JSON.parse(backupData);
+      if (!data.user || data.user !== currentUser) {
+        if (!confirm("Esta copia parece pertenecer a otro usuario o es inválida. ¿Importar de todas formas?")) return;
+      }
+      
+      if (data.exams) localStorage.setItem(`userExams_${currentUser}`, data.exams);
+      if (data.tasks) localStorage.setItem(`aways_tasks_curr_${currentUser}`, data.tasks);
+      if (data.history) localStorage.setItem(`aways_tasks_hist_${currentUser}`, data.history);
+      if (data.subjects) localStorage.setItem(`aways_subjects_${currentUser}`, data.subjects);
+      if (data.evals) localStorage.setItem(`aways_evals_${currentUser}`, data.evals);
+      
+      alert("Importación exitosa. La aplicación se reiniciará.");
+      window.location.reload();
+    } catch (e) {
+      alert("Error al importar: Formato inválido.");
+    }
+  };
 
   const addSubject = () => {
     if (!newSubName.trim()) return;
@@ -86,7 +123,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       value={newSubName}
                       onChange={(e) => setNewSubName(e.target.value)}
                       placeholder="Nombre de la asignatura"
-                      className="w-full bg-main/5 border-2 border-main p-2 text-[10px] font-black uppercase outline-none text-main"
+                      className="w-full bg-main/10 border-2 border-main p-2 text-[10px] font-black uppercase outline-none text-main placeholder:text-main/20"
                     />
                     <div className="flex gap-2">
                        {SUBJECT_COLORS.slice(0, 6).map(c => (
@@ -141,6 +178,34 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   </div>
               </div>
 
+              <div className="flex items-center justify-between pt-2 border-t border-main/10">
+                  <div className="flex items-center gap-3">
+                      <Bell size={18} className="text-primary" />
+                      <span className="text-xs font-black uppercase">Notificaciones</span>
+                  </div>
+                  <button 
+                      onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                      className={`w-12 h-6 border-2 border-main rounded-full relative transition-colors ${notificationsEnabled ? 'bg-primary' : 'bg-slate-200'}`}
+                  >
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full border border-main bg-white transition-all ${notificationsEnabled ? 'right-0.5' : 'left-0.5'}`} />
+                  </button>
+              </div>
+
+              {/* GESTIÓN DE DATOS */}
+               <div className="space-y-4 pt-4 border-t border-main/10">
+                  <h3 className="text-[10px] font-black text-main opacity-30 uppercase tracking-[0.3em]">Copia de Seguridad</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                     <button onClick={handleExport} className="p-3 bg-main/5 border-2 border-main hover:bg-main/10 flex flex-col items-center gap-2">
+                        <Download size={20} className="text-main" />
+                        <span className="text-[8px] font-black uppercase text-main">Exportar Datos</span>
+                     </button>
+                     <button onClick={() => { setBackupData(''); setShowBackupModal(true); }} className="p-3 bg-main/5 border-2 border-main hover:bg-main/10 flex flex-col items-center gap-2">
+                        <Upload size={20} className="text-main" />
+                        <span className="text-[8px] font-black uppercase text-main">Importar Datos</span>
+                     </button>
+                  </div>
+               </div>
+
                {/* SISTEMA LINKS */}
                <div className="pt-4 space-y-2 border-t border-main/10 mt-4">
                   <button onClick={() => setIsPrivacyModalOpen(true)} className="w-full flex items-center justify-between p-2 hover:bg-main/5 text-[10px] font-black uppercase text-main">
@@ -173,6 +238,33 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             isOpen={isPrivacyModalOpen}
             onClose={() => setIsPrivacyModalOpen(false)}
           />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showBackupModal && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setShowBackupModal(false)} />
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} className="bg-surface border-[4px] border-main p-6 w-full max-w-lg neo-shadow z-10 space-y-4">
+              <div className="flex justify-between items-center">
+                 <h3 className="text-xl font-black italic uppercase text-main">Copia de Seguridad</h3>
+                 <button onClick={() => setShowBackupModal(false)}><X size={20} /></button>
+              </div>
+              <p className="text-[10px] font-black uppercase opacity-40">Copia este código para guardar tus datos o pega uno aquí para restaurarlos.</p>
+              <textarea 
+                value={backupData}
+                onChange={e => setBackupData(e.target.value)}
+                className="w-full h-48 bg-main/10 border-2 border-main p-4 text-[10px] font-mono outline-none resize-none"
+                placeholder="Pegar código de seguridad aquí..."
+              />
+              <div className="flex gap-3">
+                 {backupData && backupData.includes("user") ? (
+                   <button onClick={handleImport} className="flex-1 bg-red-500 text-white py-3 font-black uppercase neo-shadow-sm border-2 border-main">RESTAURAR DATOS</button>
+                 ) : (
+                   <button onClick={() => { navigator.clipboard.writeText(backupData); alert("Copiado al portapapeles"); }} className="flex-1 bg-primary text-white py-3 font-black uppercase neo-shadow-sm border-2 border-main">COPIAR CÓDIGO</button>
+                 )}
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

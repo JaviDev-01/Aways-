@@ -101,6 +101,23 @@
         display: none;
       }
 
+      /* Dark Mode Form Visibility Fixes */
+      input, select, textarea {
+        background-color: var(--surface);
+        color: var(--text);
+        accent-color: var(--primary);
+      }
+
+      input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.5;
+      }
+
+      .dark-mode input, .dark-mode select, .dark-mode textarea {
+        border-color: var(--border);
+        color: #ffffff !important;
+      }
+
       @keyframes pulse-custom {
         0% {
           box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
@@ -116,6 +133,21 @@
         animation: pulse-custom 2s infinite;
       }
     </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: 'var(--primary)',
+              surface: 'var(--surface)',
+              main: 'var(--secondary)',
+              bg: 'var(--bg)',
+              'progress-bg': 'var(--progress-bg)'
+            }
+          }
+        }
+      }
+    </script>
     <script type="importmap">
       {
         "imports": {

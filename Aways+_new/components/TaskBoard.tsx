@@ -140,7 +140,7 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({ currentTasks, history, sub
             value={newTaskText}
             onChange={(e) => setNewTaskText(e.target.value)}
             placeholder="¿Cuál es el objetivo principal?"
-            className="w-full bg-main/5 border-[3px] border-main p-4 font-black italic text-lg outline-none text-main placeholder:opacity-20"
+            className="w-full bg-main/10 border-[3px] border-main p-4 font-black italic text-lg outline-none text-main placeholder:text-main/20"
           />
 
           <div className="grid grid-cols-2 gap-3">
@@ -242,7 +242,7 @@ export const TaskBoard: React.FC<TaskBoardProps> = ({ currentTasks, history, sub
                        <input 
                         type="text" 
                         placeholder="Nueva subtarea..."
-                        className="flex-1 bg-surface border-2 border-main p-2 text-[10px] font-black uppercase outline-none"
+                        className="flex-1 bg-main/10 border-2 border-main p-2 text-[10px] font-black uppercase outline-none text-main placeholder:text-main/20"
                         onKeyPress={(e) => {
                           if (e.key === 'Enter') {
                             addSubtask(task.id, (e.target as HTMLInputElement).value);

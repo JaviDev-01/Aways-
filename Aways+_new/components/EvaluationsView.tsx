@@ -260,7 +260,7 @@ export const EvaluationsView: React.FC<EvaluationsViewProps> = ({ quarters, onUp
             
             {isAddingSubject ? (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface border-[3px] border-main p-4 neo-shadow-sm space-y-4">
-                <input autoFocus type="text" value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAddSubject()} placeholder="NOMBRE ASIGNATURA" className="w-full bg-main/5 border-[2px] border-main p-4 text-[12px] font-black uppercase outline-none focus:bg-main/10 text-main" />
+                <input autoFocus type="text" value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} onKeyPress={e => e.key === 'Enter' && handleAddSubject()} placeholder="NOMBRE ASIGNATURA" className="w-full bg-main/10 border-[2px] border-main p-4 text-[12px] font-black uppercase outline-none focus:bg-main/20 text-main placeholder:text-main/20" />
                 <div className="flex gap-2">
                   <button onClick={handleAddSubject} className="flex-1 bg-primary text-white py-3 text-[10px] font-black uppercase border-[2px] border-main neo-shadow-sm">GUARDAR</button>
                   <button onClick={() => setIsAddingSubject(false)} className="bg-surface text-main py-3 px-6 text-[10px] font-black uppercase border-[2px] border-main">X</button>
