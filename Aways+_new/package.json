@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor-community/electron": "^5.0.1",
     "@capacitor/android": "8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/core": "^8.0.0",
@@ -22,7 +23,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "8.0.0",
-    "@types/node": "^22.14.0",
+    "@types/node": "^22.19.3",
     "@vitejs/plugin-react": "^5.0.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"

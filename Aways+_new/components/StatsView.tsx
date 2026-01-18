@@ -54,34 +54,36 @@ export const StatsView: React.FC<StatsViewProps> = ({ exams, totalMinutes, curre
 
   return (
     <div className="space-y-6 pb-24">
-      {/* RANGO CARD */}
-      <div className="bg-surface border-[3px] border-main p-6 neo-shadow relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 text-primary opacity-5 rotate-12 group-hover:rotate-45 transition-transform duration-1000">
-              <Star size={180} fill="currentColor" />
-          </div>
-          <div className="relative z-10 flex justify-between items-center">
-             <div className="space-y-1">
-                <p className="text-[9px] font-black text-main opacity-40 uppercase tracking-[0.3em]">Rango de Combate</p>
-                <h3 className="text-3xl font-black italic text-main tracking-tighter uppercase leading-none">{currentLevel.title}</h3>
-             </div>
-             <div className="w-14 h-14 bg-primary text-white border-[3px] border-main flex items-center justify-center neo-shadow-sm">
-                <Trophy size={28} strokeWidth={3} />
-             </div>
-          </div>
-      </div>
-
-      {/* QUICK STATS */}
-      <div className="grid grid-cols-2 gap-4">
-         <div className="bg-surface p-4 border-[3px] border-main neo-shadow-sm">
-            <Flame size={20} className="text-orange-500 mb-1" fill="currentColor" />
-            <p className="text-[24px] font-black italic text-main leading-none">{stats.currentStreak}D</p>
-            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">Racha Actual</p>
-         </div>
-         <div className="bg-surface p-4 border-[3px] border-main neo-shadow-sm">
-            <Clock size={20} className="text-primary mb-1" />
-            <p className="text-[24px] font-black italic text-main leading-none">{Math.floor(totalMinutes/60)}H</p>
-            <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">Estudio Total</p>
-         </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* RANGO CARD */}
+        <div className="bg-surface border-[3px] border-main p-6 neo-shadow relative overflow-hidden group">
+            <div className="absolute -right-6 -top-6 text-primary opacity-5 rotate-12 group-hover:rotate-45 transition-transform duration-1000">
+                <Star size={180} fill="currentColor" />
+            </div>
+            <div className="relative z-10 flex justify-between items-center">
+               <div className="space-y-1">
+                  <p className="text-[9px] font-black text-main opacity-40 uppercase tracking-[0.3em]">Rango de Combate</p>
+                  <h3 className="text-3xl font-black italic text-main tracking-tighter uppercase leading-none">{currentLevel.title}</h3>
+               </div>
+               <div className="w-14 h-14 bg-primary text-white border-[3px] border-main flex items-center justify-center neo-shadow-sm">
+                  <Trophy size={28} strokeWidth={3} />
+               </div>
+            </div>
+        </div>
+  
+        {/* QUICK STATS */}
+        <div className="grid grid-cols-2 gap-4">
+           <div className="bg-surface p-4 border-[3px] border-main neo-shadow-sm h-full flex flex-col justify-center">
+              <Flame size={20} className="text-orange-500 mb-1" fill="currentColor" />
+              <p className="text-[24px] font-black italic text-main leading-none">{stats.currentStreak}D</p>
+              <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">Racha Actual</p>
+           </div>
+           <div className="bg-surface p-4 border-[3px] border-main neo-shadow-sm h-full flex flex-col justify-center">
+              <Clock size={20} className="text-primary mb-1" />
+              <p className="text-[24px] font-black italic text-main leading-none">{Math.floor(totalMinutes/60)}H</p>
+              <p className="text-[9px] font-black opacity-30 uppercase tracking-widest">Estudio Total</p>
+           </div>
+        </div>
       </div>
 
       {/* ACHIEVEMENTS ENGINE */}
@@ -103,7 +105,7 @@ export const StatsView: React.FC<StatsViewProps> = ({ exams, totalMinutes, curre
             ))}
         </div>
         
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 lg:grid-cols-6 gap-3">
             <AnimatePresence mode="popLayout">
                 {filteredAchievements.map((achievement) => {
                     const isUnlocked = achievement.requirement(stats);

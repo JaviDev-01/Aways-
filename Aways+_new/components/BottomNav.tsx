@@ -1,7 +1,7 @@
 
-import React from 'react';
-import { LayoutGrid, Calendar, BarChart3, Plus, Shield } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { LayoutGrid, Calendar, Plus, Settings, ClipboardList, BarChart3, X, MoreHorizontal, GraduationCap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AppTab } from '../types';
 
 interface BottomNavProps {
@@ -11,57 +11,112 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, onAddClick }) => {
-  
+  const [isHubOpen, setIsHubOpen] = useState(false);
+
+  const handleAddAction = () => {
+    setIsHubOpen(false);
+    onAddClick();
+  };
+
   const NavItem = ({ tab, icon: Icon, label }: { tab: AppTab, icon: any, label: string }) => {
     const isActive = activeTab === tab;
-    
     return (
       <button
-        onClick={() => onTabChange(tab)}
-        className={`relative flex flex-col items-center justify-center w-full h-14 transition-all ${isActive ? 'text-primary' : 'text-main opacity-20 hover:opacity-50'}`}
+        onClick={() => {
+          onTabChange(tab);
+          setIsHubOpen(false);
+        }}
+        className={`flex flex-col items-center justify-center flex-1 h-full transition-all ${isActive ? 'text-primary' : 'text-main opacity-20 hover:opacity-50'}`}
       >
-        <div className={`p-2 transition-all ${isActive ? 'scale-110' : 'scale-100'}`}>
-          <Icon size={22} strokeWidth={isActive ? 3 : 2} />
-        </div>
-        <span className={`text-[8px] font-black uppercase tracking-tighter ${isActive ? 'opacity-100' : 'opacity-0'}`}>
+        <Icon size={20} strokeWidth={isActive ? 3 : 2} />
+        <span className={`text-[7px] font-black uppercase tracking-tighter mt-1 ${isActive ? 'opacity-100' : 'opacity-0'}`}>
           {label}
         </span>
-        {isActive && (
-           <motion.div 
-            layoutId="nav-pill" 
-            className="absolute -bottom-1 w-1 h-1 bg-primary rounded-full"
-           />
-        )}
       </button>
     );
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 px-6 pb-6 pt-2 pointer-events-none">
-      <motion.div 
-        initial={{ y: 80 }}
-        animate={{ y: 0 }}
-        className="max-w-md mx-auto bg-surface/80 backdrop-blur-xl border-[3px] border-main px-4 py-2 flex items-center justify-between neo-shadow pointer-events-auto relative"
-      >
-        <div className="flex-1 flex justify-around items-center">
-          <NavItem tab="home" icon={LayoutGrid} label="Inicio" />
-          <NavItem tab="calendar" icon={Calendar} label="Agenda" />
+    <div className="fixed bottom-0 left-0 right-0 z-[100] px-4 pb-6 pt-2 pointer-events-none lg:hidden">
+      <div className="max-w-md mx-auto relative">
+        
+        <AnimatePresence>
+          {isHubOpen && (
+            <>
+              <motion.div 
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/40 backdrop-blur-sm pointer-events-auto"
+                onClick={() => setIsHubOpen(false)}
+              />
+              <motion.div 
+                initial={{ y: 20, opacity: 0, scale: 0.9 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: 20, opacity: 0, scale: 0.9 }}
+                className="absolute bottom-20 right-0 w-52 p-4 bg-surface border-[4px] border-main neo-shadow pointer-events-auto flex flex-col gap-2"
+              >
+                <div className="flex justify-between items-center mb-1">
+                   <span className="text-[9px] font-black uppercase tracking-[0.3em] opacity-30">Protocolos</span>
+                   <button 
+                    onClick={() => setIsHubOpen(false)}
+                    className="p-1 hover:bg-main/5 transition-colors"
+                   >
+                    <X size={16} strokeWidth={3} />
+                   </button>
+                </div>
+
+                <button
+                  onClick={() => { onTabChange('evaluations'); setIsHubOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 border-[3px] border-main neo-shadow-sm transition-all ${activeTab === 'evaluations' ? 'bg-main text-surface' : 'bg-surface text-main'}`}
+                >
+                  <GraduationCap size={18} className={activeTab === 'evaluations' ? 'text-white' : 'text-primary'} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Evaluaciones</span>
+                </button>
+
+                <button
+                  onClick={() => { onTabChange('settings'); setIsHubOpen(false); }}
+                  className={`w-full flex items-center gap-3 p-3 border-[3px] border-main neo-shadow-sm transition-all ${activeTab === 'settings' ? 'bg-main text-surface' : 'bg-surface text-main'}`}
+                >
+                  <Settings size={18} className={activeTab === 'settings' ? 'text-white' : 'text-primary'} />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Ajustes</span>
+                </button>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        <div className="absolute -top-12 right-0 pointer-events-auto">
+          <AnimatePresence>
+            {!isHubOpen && (
+              <motion.button
+                key="hub-trigger"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0, opacity: 0 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsHubOpen(true)}
+                className="w-10 h-10 border-[3px] border-main neo-shadow-sm flex items-center justify-center bg-surface text-main hover:bg-main/5 transition-colors"
+              >
+                <MoreHorizontal size={18} strokeWidth={4} />
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onAddClick}
-          className="w-14 h-14 bg-main text-surface border-[3px] border-main flex items-center justify-center neo-shadow -mt-12 mx-4 z-10 hover:bg-primary transition-colors"
-        >
-          <Plus size={28} strokeWidth={4} />
-        </motion.button>
+        <div className="bg-surface border-[3px] border-main h-16 flex items-center neo-shadow pointer-events-auto overflow-hidden">
+          <NavItem tab="home" icon={LayoutGrid} label="INICIO" />
+          <NavItem tab="tasks" icon={ClipboardList} label="TAREAS" />
+          
+          <button
+            onClick={handleAddAction}
+            className="w-16 h-full bg-primary text-surface border-x-[3px] border-main flex items-center justify-center hover:brightness-110 active:brightness-90 transition-all group"
+          >
+            <Plus size={28} strokeWidth={4} className="group-hover:rotate-90 transition-transform duration-300" />
+          </button>
 
-        <div className="flex-1 flex justify-around items-center">
-          <NavItem tab="stats" icon={BarChart3} label="Stats" />
-          <NavItem tab="settings" icon={Shield} label="Ajustes" />
+          <NavItem tab="calendar" icon={Calendar} label="AGENDA" />
+          <NavItem tab="stats" icon={BarChart3} label="STATS" />
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

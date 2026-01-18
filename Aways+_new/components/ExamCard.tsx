@@ -9,7 +9,6 @@ interface ExamCardProps {
   onDelete: (id: string) => void;
   onEdit: (exam: Exam) => void;
   onOpenStudySession: (exam: Exam) => void;
-  onStartEarly: (id: string) => void;
 }
 
 export const ExamCard: React.FC<ExamCardProps> = ({ exam, onDelete, onEdit, onOpenStudySession }) => {

@@ -1,5 +1,71 @@
 
 
+export enum Importance {
+  LOW = 'BAJA',
+  MEDIUM = 'MEDIA',
+  HIGH = 'CRÍTICA'
+}
+
+export interface SubTask {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+export interface TaskSubject {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export interface Task {
+  id: string;
+  text: string;
+  completed: boolean;
+  importance: Importance;
+  subjectId?: string;
+  subtasks: SubTask[];
+  createdAt: number;
+}
+
+export interface DailyArchive {
+  date: string;
+  tasks: { t: string; c: boolean; s?: string; i: Importance }[];
+  successRate: number;
+}
+
+export interface WeightCategory {
+  id: string;
+  name: string;
+  weight: number; 
+}
+
+export interface GradeEntry {
+  id: string;
+  name: string;
+  score: number;
+  categoryId: string; 
+  date: string;
+}
+
+export interface EvaluationSubject {
+  id: string;
+  name: string;
+  color: string;
+  weightCategories: WeightCategory[];
+  grades: GradeEntry[];
+  isClosed?: boolean;
+  recoveryGrade?: number;
+  improvementGrade?: number;
+  finalManualGrade?: number;
+}
+
+export interface Quarter {
+  id: string;
+  name: string;
+  subjects: EvaluationSubject[];
+}
+
 export interface StudySession {
   date: string; 
   minutes: number;
@@ -58,7 +124,7 @@ export interface UserLevel {
   minMinutes: number;
 }
 
-export type AppTab = 'home' | 'calendar' | 'stats' | 'settings';
+export type AppTab = 'home' | 'tasks' | 'calendar' | 'evaluations' | 'stats' | 'settings';
 
 export const USER_LEVELS: UserLevel[] = [
   { title: "Cadete", minMinutes: 0 },
