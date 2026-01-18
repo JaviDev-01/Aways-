@@ -30,9 +30,9 @@ export const NotificationService = {
         const examDate = new Date(exam.examDate);
         if (isNaN(examDate.getTime())) return;
 
-        // 1. Exam Day Notification (8:00 AM)
+        // 1. Exam Day Notification (7:30 AM)
         const examDayMorning = new Date(examDate);
-        examDayMorning.setHours(8, 0, 0, 0);
+        examDayMorning.setHours(7, 30, 0, 0);
 
         if (examDayMorning > now) {
           notifications.push({
@@ -58,7 +58,7 @@ export const NotificationService = {
             // Calculate date: ExamDate - i days
             const studyDate = new Date(examDate);
             studyDate.setDate(examDate.getDate() - i);
-            studyDate.setHours(17, 0, 0, 0); // 5:00 PM study reminder
+            studyDate.setHours(14, 30, 0, 0); // 2:30 PM study reminder
 
             if (studyDate > now) {
               const daysLeft = i;

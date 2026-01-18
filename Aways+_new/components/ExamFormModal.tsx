@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { X, Plus, Trash2, CheckCircle2, AlertTriangle, ChevronDown } from 'lucide-react';
 import { Exam, SUBJECT_COLORS, Priority, SyllabusItem } from '../types';
 
 interface ExamFormModalProps {
@@ -73,25 +73,25 @@ export const ExamFormModal: React.FC<ExamFormModalProps> = ({ isOpen, onClose, o
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
       <motion.div 
-        initial={{ y: 200, scale: 0.95 }} 
-        animate={{ y: 0, scale: 1 }} 
-        className="bg-surface border-[4px] border-main w-full max-w-lg p-6 relative z-10 neo-shadow overflow-y-auto max-h-[90vh]"
+        initial={{ y: '100%' }} 
+        animate={{ y: 0 }} 
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+        className="fixed inset-0 bg-surface z-[160] overflow-y-auto flex flex-col"
       >
-        <div className="flex justify-between items-center mb-8 sticky top-0 bg-surface z-20 pb-4 border-b border-main/10">
-          <div className="bg-main text-surface px-4 py-1.5 neo-shadow-sm">
-            <h2 className="text-lg font-black italic uppercase tracking-tighter">
-                {editingExam ? 'Actualizar Misión' : 'Nueva Misión'}
-            </h2>
+        <div className="sticky top-0 bg-surface/95 backdrop-blur z-20 px-6 py-6 border-b-[3px] border-main flex justify-between items-center shrink-0">
+          <div className="flex items-center gap-3">
+             <button onClick={onClose} className="p-2 -ml-2 text-main hover:bg-main/5 rounded-full transition-colors">
+                <ChevronDown size={32} strokeWidth={3} />
+             </button>
+             <h2 className="text-2xl font-black italic uppercase tracking-tighter text-main">
+                {editingExam ? 'Editar Misión' : 'Nueva Misión'}
+             </h2>
           </div>
-          <button onClick={onClose} className="p-2 text-main opacity-20 hover:opacity-100 transition-opacity">
-            <X size={28} strokeWidth={4} />
-          </button>
         </div>
 
-        <div className="space-y-6">
+        <div className="p-6 space-y-8 max-w-3xl mx-auto w-full pb-32">
           {/* COLOR PICKER */}
           <div>
             <label className="text-[9px] font-black text-main opacity-40 uppercase tracking-[0.2em] block mb-3">ADN Visual del Objetivo</label>
@@ -190,6 +190,5 @@ export const ExamFormModal: React.FC<ExamFormModalProps> = ({ isOpen, onClose, o
           </div>
         </div>
       </motion.div>
-    </div>
   );
 };

@@ -155,7 +155,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({ exams }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             onClick={jumpToToday}
-            className="fixed bottom-36 left-1/2 -translate-x-1/2 z-[105] bg-primary/95 backdrop-blur-md text-white border-[3px] border-main neo-shadow px-6 py-3 rounded-full flex items-center gap-3 text-[10px] font-black uppercase tracking-widest transition-transform active:scale-95"
+            className="fixed bottom-36 left-1/2 -translate-x-1/2 z-[105] bg-main text-surface border-[3px] border-surface neo-shadow px-6 py-3 rounded-full flex items-center gap-3 text-[10px] font-black uppercase tracking-widest transition-transform active:scale-95 hover:scale-105"
           >
             <Target size={16} strokeWidth={4} /> VOLVER A HOY
           </motion.button>
