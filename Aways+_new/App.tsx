@@ -439,7 +439,7 @@ const App: React.FC = () => {
       <AnimatePresence>
         {newlyUnlockedAchievement && <AchievementUnlockedModal achievement={newlyUnlockedAchievement} onClose={() => setNewlyUnlockedAchievement(null)} />}
       </AnimatePresence>
-      <AnimatePresence>
+
       <AnimatePresence>
         {updateStatus !== 'idle' && (
           <motion.div
@@ -487,7 +487,6 @@ const App: React.FC = () => {
             )}
           </motion.div>
         )}
-      </AnimatePresence>
       </AnimatePresence>
     </div>
   );
