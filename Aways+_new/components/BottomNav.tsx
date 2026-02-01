@@ -64,6 +64,14 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, on
               </button>
 
               <button
+                onClick={() => { onTabChange('stats'); setIsHubOpen(false); }}
+                className={`w-full flex items-center gap-4 p-4 border-[3px] border-main neo-shadow-sm ${activeTab === 'stats' ? 'bg-main text-surface' : 'bg-surface text-main'}`}
+              >
+                <div className="p-2 bg-primary/10 rounded-full"><BarChart3 size={20} /></div>
+                <span className="text-xs font-black uppercase tracking-widest">Estadísticas</span>
+              </button>
+
+              <button
                 onClick={() => { onTabChange('settings'); setIsHubOpen(false); }}
                 className={`w-full flex items-center gap-4 p-4 border-[3px] border-main neo-shadow-sm ${activeTab === 'settings' ? 'bg-main text-surface' : 'bg-surface text-main'}`}
               >
@@ -88,7 +96,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onTabChange, on
             </button>
           </div>
 
-          <NavItem tab="stats" icon={BarChart3} label="STATS" />
+          <NavItem tab="calendar" icon={Calendar} label="AGENDA" />
           
           <button
             onClick={() => setIsHubOpen(true)}
